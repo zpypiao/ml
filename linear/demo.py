@@ -1,5 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.model_selection import KFold
+
+
+
+# creat the ten-fold data verify model
+kf = KFold(n_splits=10, shuffle=True, random_state=42)
 
 raw_data = []
 # import data
@@ -22,13 +28,10 @@ for each in raw_data:
 data = np.asarray(processed_data, dtype=float)
 
 
-train_data = data[len(data)//10:]
-test_data = data[:len(data)//10]
 
+# train_data = data[len(data)//10:]
+# test_data = data[:len(data)//10]
 
-# define the initial parameter of function
-W = np.array([0. for _ in range(8)])
-b = 0
 
 # calculate the loss partial
 def loss_partial(W, b, X, y, alpha):
@@ -46,30 +49,46 @@ def loss_partial(W, b, X, y, alpha):
     # return the new value of W and b
     return W, b
 
+# define the process
+def train_model(train_data, test_data, alpha):
+
+
+    # define the initial parameter of function
+    W = np.array([0. for _ in range(8)])
+    b = 0
+    # train the model
+    for _ in range(10):
+        for each in train_data:
+            X = each[:8]
+            y = each[8]
+            W, b = loss_partial(W, b, X, y, alpha)
+
+    return W, b
+
+
+# define the outcome of test
+def test_model(test_data, W, b):
+
+    Y = []
+    Yt = []
+
+    for each in test_data:
+        Y.append(each[8])
+        Yt.append(np.dot(W, each[:8]) + b)
+
+
+    plt.plot(Y, 'red')
+    plt.plot(Yt, 'blue')
+    plt.show()
+
+
+
 # define the learn rate
-alpha = 0.001
+alpha = 0.01
 
-# train the model
-for each in train_data:
-    X = each[:8]
-    y = each[8]
-    W, b = loss_partial(W, b, X, y, alpha)
+for _, (train_ind, test_ind) in enumerate(kf.split(data), 1):
+    train_data = data[train_ind]
+    test_data = data[test_ind]
 
-
-# # test the data
-# X = test_data[:][:8]
-# Y = test_data[:][8]
-# Yt = np.dot(W, X) + b
-
-Y = []
-Yt = []
-
-for each in test_data:
-    Y.append(each[8])
-    Yt.append(np.dot(W, each[:8]) + b)
-
-print(Y, Yt)
-
-plt.plot(Y, 'red')
-plt.plot(Yt, 'blue')
-plt.show()
+    W, b = train_model(train_data, test_data, alpha)
+    test_model(test_data, W, b)
