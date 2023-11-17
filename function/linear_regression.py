@@ -1,19 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import KFold
-
+from read_data import read_data
 
 
 # creat the ten-fold data verify model
 kf = KFold(n_splits=10, shuffle=True, random_state=42)
 
-
-
-
-
-# train_data = data[len(data)//10:]
-# test_data = data[:len(data)//10]
-
+# read data
+data = read_data()
 
 # calculate the loss partial
 def loss_partial(W, b, X, y, alpha):
