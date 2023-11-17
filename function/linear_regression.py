@@ -7,25 +7,7 @@ from sklearn.model_selection import KFold
 # creat the ten-fold data verify model
 kf = KFold(n_splits=10, shuffle=True, random_state=42)
 
-raw_data = []
-# import data
-with open('./data/abalone.data', 'r') as file:
-    for line in file:
-        raw_data.append(line.strip().split(','))
 
-processed_data = []
-
-for each in raw_data:
-    if each[0] == 'M':
-        each[0] = 1
-    elif each[0] == 'F':
-        each[0] = 2
-    else:
-        each[0] = 3
-    
-    processed_data.append(each)
-
-data = np.asarray(processed_data, dtype=float)
 
 
 
